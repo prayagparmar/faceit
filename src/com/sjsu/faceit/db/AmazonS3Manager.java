@@ -29,6 +29,8 @@ public class AmazonS3Manager {
 	public static void createConnection() throws AmazonS3Exception{
 		instance = new AmazonS3Client(new AWSCredentials() {
 			
+			
+			//Modify the Amazon S3 keys with the new account created
 			@Override
 			public String getAWSSecretKey() {
 				return "7hnuFtnUOlNw/diD6ezw3pJmtMwaomBwaeAerfqu";

@@ -12,42 +12,46 @@
 	<!-- ========================================= -->
 
 	<target name='init'>
+		
+		<!--CHANGE THIS PROPERTY -->
+		<!-- Point this to local tomcat home -->
+		<property name='tomcat.home' value='/usr/local/tomcat' />
+		
 		<property name='webcontent.dir' value='${basedir}/WebContent' />
 		<property name='build.dir' value='${basedir}/build' />
 		<property name='faceit.war' value='${build.dir}/faceit.war' />
 
 		<!-- installation specific provide the jars over here-->
-		<property name='wink.home' value='/usr/local/apache/apache-wink-incubating' />
-		<property name='tomcat.home' value='/usr/local/tomcat' />
-		<property name='amazon.home' value='/usr/local/amazon' />
-		<property name='mysql.home' value='/usr/local/mysql-driver' />
-		<property name='logging.home' value='/usr/local/apache/logging' />
-		<property name='http.home' value='/usr/local/apache/http' />
-		<property name='codec.home' value='/usr/local/apache/codec' />
+		<property name='wink.home' value='lib/apache/apache-wink-incubating' />
+		<property name='amazon.home' value='lib/amazon' />
+		<property name='jdbc.home' value='lib/mysql-driver' />
+		<property name='logging.home' value='lib/apache/logging' />
+		<property name='http.home' value='lib/apache/http' />
+		<property name='codec.home' value='lib/apache/codec' />
 		
 		<!-- jar home for facial recognition and detection code -->
-		<property name='apache-axis.home' value='/Users/prayag/Eclipse/Web-Services/FaceIt/lib/apache-axis-1.4' />
-		<property name='metadata-extractor.home' value='/Users/prayag/Eclipse/Web-Services/FaceIt/lib/metadata-extractor-2.3.1' />
-		<property name='opencv.home' value='/Users/prayag/Eclipse/Web-Services/FaceIt/lib/opencv1.0' />
+		<property name='apache-axis.home' value='lib/apache-axis-1.4' />
+		<property name='metadata-extractor.home' value='lib/metadata-extractor-2.3.1' />
+		<property name='opencv.home' value='lib/opencv1.0' />
 
 		<path id='clt.classpath'>
 			<pathelement location='${basedir}/classes' />
 			<pathelement location='${junit.jar}' />
 			<pathelement location='${wink.home}/dist/wink-1.1.2-incubating.jar' />
-			<fileset dir='${wink.home}/lib'>
+			<fileset dir='${wink.home}'>
 				<include name='**/*.jar' />
 			</fileset>
 		</path>
 
 		<path id='build.classpath'>
 			<pathelement location='${basedir}/classes' />
-			<fileset dir='${wink.home}/lib'>
+			<fileset dir='${wink.home}'>
 				<include name='**/*.jar' />
 			</fileset>
 			<fileset dir='${wink.home}/dist'>
 				<include name='**/*.jar' />
 			</fileset>
-			<fileset dir='${mysql.home}'>
+			<fileset dir='${jdbc.home}'>
 				<include name='**/*.jar' />
 			</fileset>
 			<fileset dir='${amazon.home}'>
@@ -69,7 +73,7 @@
 				<include name='**/*.jar' />
 			</fileset>
 			<fileset dir='${opencv.home}'>
-				<include name='**/*.exe' />
+				<include name='**/*.*' />
 			</fileset>
 			
 		</path>
@@ -96,17 +100,17 @@
 		<war destfile="${faceit.war}" webxml="${webcontent.dir}/WEB-INF/web.xml">
 			<webinf dir="${webcontent.dir}/WEB-INF" includes="**/*" />
 			<classes dir="${basedir}/classes" includes="**/*" />
-			<lib dir="${wink.home}/lib" includes="*.jar" />
+			<lib dir="${wink.home}" includes="*.jar" />
 			<lib file="${wink.home}/dist/wink-common-1.1.2-incubating.jar" />
 			<lib file="${wink.home}/dist/wink-server-1.1.2-incubating.jar" />
 			<lib dir="${amazon.home}" includes="*.jar" />
-			<lib dir="${mysql.home}" includes="*.jar" />
+			<lib dir="${jdbc.home}" includes="*.jar" />
 			<lib dir="${codec.home}" includes="*.jar" />
 			<lib dir="${logging.home}" includes="*.jar" />
 			<lib dir="${http.home}" includes="*.jar" />
 			<lib dir="${apache-axis.home}" includes="*.jar" />
 			<lib dir="${metadata-extractor.home}" includes="*.jar" />
-			<lib dir="${opencv.home}" includes="*.exe" />
+			<lib dir="${opencv.home}" includes="*.*" />
 		</war>
 	</target>
 

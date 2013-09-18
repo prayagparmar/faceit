@@ -60,10 +60,8 @@ public class SkinColorFilter implements IDetectionFilter, ISwingCustomizable {
 	 */
 	public SkinColorFilter() {
 		try {
-			System.out.println(new File(TABLE_FILE).getAbsolutePath());
-			System.out.println(new File(TABLE_FILE).exists());
 //			InputStream file = SkinColorFilter.class.getResource(TABLE_FILE).openStream();
-			InputStream file = Thread.currentThread().getContextClassLoader().getResourceAsStream("/" + TABLE_FILE);
+			InputStream file = Thread.currentThread().getContextClassLoader().getResourceAsStream("../lib/" + TABLE_FILE);
 			ObjectInputStream in = new ObjectInputStream(file);
 			hsTable = (HS_Table)in.readObject();
 			in.close();

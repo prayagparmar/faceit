@@ -36,14 +36,23 @@ public class FaceItClient {
 //	private static final String endPoint = "http://ec2-23-20-101-146.compute-1.amazonaws.com:8080/faceit/service";
 	
 //	Windows
-	private static final String endPoint = "http://ec2-50-16-89-175.compute-1.amazonaws.com:8080/faceit/service";
+	private static final String endPoint = "http://ec2-174-129-117-183.compute-1.amazonaws.com:8080/faceit/service";
 	
 	public static void main(String [] args) throws IOException, TransformerException {
 //		signUpUser();
-		loginUser();
+		loginUser();		
+//		forgotPassword();
 	}
 	
-	private static void signUpUser() throws IOException, TransformerException {
+	private static void forgotPassword() {
+		String url = endPoint + "/resetpassword/username/shahmaniel@gmail.com";
+		RestClient client = new RestClient();
+		Resource resource = client.resource(url);
+		ClientResponse clr = resource.get();
+		System.out.println(clr.getEntity(String.class));
+	}
+
+	public static void signUpUser() throws IOException, TransformerException {
 		
 		String url = endPoint + "/signup";
 
@@ -59,15 +68,14 @@ public class FaceItClient {
 		
 	}
 	
-	private static void loginUser() throws IOException, TransformerException{
+	public static void loginUser() throws IOException, TransformerException{
 		
-		String url = endPoint + "/login/username/shahmaniel@gmail.com/password/gP_lm9E";
+		String url = endPoint + "/login/username/prayag@gmail.com/password/bh_0jnL";
 
 		RestClient client = new RestClient();
 		Resource resource = client.resource(url);
 		
 		String xmlString = generateLoginXML();
-		System.out.println(xmlString);
 		
 		ClientResponse clr = resource.contentType(MediaType.APPLICATION_XML).accept(MediaType.APPLICATION_XML).post(xmlString);
 		System.out.println("Client Id:" + clr.getStatusCode());
@@ -75,9 +83,9 @@ public class FaceItClient {
 
 	}
 	
-	private static String generateLoginXML() throws IOException, TransformerException{
+	public static String generateLoginXML() throws IOException, TransformerException{
 		
-		String image = generateImageXMLString("/Users/prayag/Desktop/Login/6.jpg");
+		String image = generateImageXMLString("/Users/prayag/Desktop/Login/11.jpg");
 		
 		Document document = null;
 		try {
@@ -112,11 +120,11 @@ public class FaceItClient {
 	
 	private static String generateSignUpXML() throws IOException, TransformerException{
 		
-		String image1 = generateImageXMLString("/Users/prayag/Desktop/Signup/1.jpg");
-		String image2 = generateImageXMLString("/Users/prayag/Desktop/Signup/2.jpg");
-		String image3 = generateImageXMLString("/Users/prayag/Desktop/Signup/3.jpg");
-		String image4 = generateImageXMLString("/Users/prayag/Desktop/Signup/4.jpg");
-		String image5 = generateImageXMLString("/Users/prayag/Desktop/Signup/5.jpg");
+		String image1 = generateImageXMLString("/Users/prayag/Desktop/Signup/6.jpg");
+		String image2 = generateImageXMLString("/Users/prayag/Desktop/Signup/7.jpg");
+		String image3 = generateImageXMLString("/Users/prayag/Desktop/Signup/8.jpg");
+		String image4 = generateImageXMLString("/Users/prayag/Desktop/Signup/9.jpg");
+		String image5 = generateImageXMLString("/Users/prayag/Desktop/Signup/10.jpg");
 		
 		Document document = null;
 		try {
@@ -136,7 +144,7 @@ public class FaceItClient {
 			rootElement.appendChild(lastNameElement);
 			
 			Element emailElement = document.createElement("email");
-			emailElement.setTextContent("shahmaniel@gmail.com");
+			emailElement.setTextContent("prayag@gmail.com");
 			rootElement.appendChild(emailElement);
 			
 			Element stateElement = document.createElement("state");

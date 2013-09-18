@@ -16,7 +16,7 @@ import org.xml.sax.SAXException;
 import com.sjsu.faceit.bean.LoginImageData;
 import com.sjsu.faceit.bean.SignUpData;
 import com.sjsu.faceit.db.AmazonS3Manager;
-import com.sjsu.faceit.db.MySqlDbManager;
+import com.sjsu.faceit.db.MySQLManager;
 import com.sjsu.faceit.exception.AmazonS3Exception;
 import com.sjsu.faceit.exception.EmailAlreadyRegisteredException;
 import com.sjsu.faceit.exception.InvalidEmailException;
@@ -58,6 +58,7 @@ public class FaceItImpl implements FaceItService{
 		
 		SignUpData signUpData = null;
 		
+		
 		try {
 			
 			//Validate and convert XML data to SignUp object
@@ -97,10 +98,6 @@ public class FaceItImpl implements FaceItService{
 			MainController.getInstance().detectFace(imageFile4, faceDB);
 			MainController.getInstance().detectFace(imageFile5, faceDB);
 			
-			//Store success data into detection.txt
-			String currentTimeStamp = ImplHelper.getCurrentTimeStamp();
-			ImplHelper.storeDetectionSuccessData(signUpData.getEmail(), currentTimeStamp);
-		
 			//Store the facedb in the same folder as images
 			File faceDBFile = faceDB.writeToDisk(folderPath);
 			
@@ -117,7 +114,7 @@ public class FaceItImpl implements FaceItService{
 			System.out.println("Checking if the folder was deleted: " + isDeleted);
 			
 			//store the complete data along with unique retrieval key into MySQL DB. MySQL is on EC2.
-			MySqlDbManager.getInstance().AddSignUpDataToDB(signUpData);
+			MySQLManager.getInstance().AddSignUpDataToDB(signUpData);
 			
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
@@ -163,11 +160,6 @@ public class FaceItImpl implements FaceItService{
 			return Response.status(500).entity("Email registered Error!!").build();
 		} catch (UnableToProcesImageException e) {
 			e.printStackTrace();
-			
-			//store failure data into detectionFailure.txt
-			String currentTimeStamp = ImplHelper.getCurrentTimeStamp();
-			ImplHelper.storeDetectionFailureData(signUpData.getEmail(), currentTimeStamp);
-			
 			return Response.status(500).entity(e.getMessage()).build();
 		} catch(Exception e){
 			e.printStackTrace();
@@ -183,15 +175,15 @@ public class FaceItImpl implements FaceItService{
 		try {
 			
 			//check if the userName exists
-			boolean isEmailRegistered = MySqlDbManager.getInstance().isEmailRegistered(userName);
+			boolean isEmailRegistered = MySQLManager.getInstance().isEmailRegistered(userName);
 			if(!isEmailRegistered){
-				Response.status(200).entity("Username/Email is not registered!!").build();
+				return Response.status(500).entity("Username/Email is not registered!!").build();
 			}
 			
 			//check if username and password matches
-			boolean isPasswordCorrect = MySqlDbManager.getInstance().checkUserNamePasswordMatch(userName, password);;
+			boolean isPasswordCorrect = MySQLManager.getInstance().checkUserNamePasswordMatch(userName, password);;
 			if(!isPasswordCorrect){
-				Response.status(200).entity("Access code is incorrect!!").build();
+				return Response.status(500).entity("Access code is incorrect!!").build();
 			}
 			
 			//Store the xml image data
@@ -199,8 +191,7 @@ public class FaceItImpl implements FaceItService{
 			String imageData = loginImageData.getImageData();
 			
 			//fetch the original image key from the database
-			String originalImageKey = MySqlDbManager.getInstance().fetchImageKey(userName);
-			System.out.println("\n\nImage Key: " + originalImageKey + "\n\n");
+			String originalImageKey = MySQLManager.getInstance().fetchImageKey(userName);
 			
 			//create a folder with imageKey in temp folder inside tomcat
 			String folderPath = ImplHelper.createImageFolder(originalImageKey);
@@ -229,7 +220,7 @@ public class FaceItImpl implements FaceItService{
 			while(list.hasNext()){
 				recognitionScore = list.next().getValue();
 				System.out.println("Recognition score: " + recognitionScore);
-				ImplHelper.storeRecognitionData(userName, ImplHelper.getCurrentTimeStamp(), recognitionScore);
+				MySQLManager.getInstance().storeRecognitionData(userName, ImplHelper.getCurrentTimeStamp(), recognitionScore);
 			}
 			
 			//Delete the folder once recognition score is obtained
@@ -237,11 +228,11 @@ public class FaceItImpl implements FaceItService{
 			System.out.println("Checking if the folder was deleted: " + isDeleted);
 			
 			//return success if score is greater than 40
-			if(recognitionScore > 40){
+			if(recognitionScore > 25){
 				return Response.status(200).entity("Face Recognition SUCCEEDED!!").build();
 			}
 			
-			return Response.status(500).entity("Face Recognition FAILED!!").build();
+			return Response.status(200).entity("Face Recognition FAILED!!").build();
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -288,7 +279,7 @@ public class FaceItImpl implements FaceItService{
 		
 		try {
 			//Check the email if it is registered and fetch the security question
-			String securityQuestion = MySqlDbManager.getInstance().fetchSecurityQuestion(userName);
+			String securityQuestion = MySQLManager.getInstance().fetchSecurityQuestion(userName);
 			
 			return Response.status(200).entity(securityQuestion).build();
 			
@@ -321,13 +312,15 @@ public class FaceItImpl implements FaceItService{
 		
 		try {
 			//verify the security answer
-			MySqlDbManager.getInstance().verifySecurityAnswer(userName, securityanswer);
+			MySQLManager.getInstance().verifySecurityAnswer(userName, securityanswer);
 			
 			//regenerate the password
 			newPassword = ImplHelper.generatePassword();
 			
 			//update the database with new password
-			MySqlDbManager.getInstance().updateNewPassword(userName, newPassword);
+			MySQLManager.getInstance().updateNewPassword(userName, newPassword);
+			
+			return Response.status(200).entity(newPassword).build();
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -349,6 +342,5 @@ public class FaceItImpl implements FaceItService{
 			return Response.status(500).entity("General Exception!!").build();
 		}
 		
-		return Response.status(200).entity(newPassword).build();
 	}
 }

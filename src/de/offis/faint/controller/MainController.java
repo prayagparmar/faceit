@@ -205,7 +205,7 @@ public class MainController {
 			scanWindowPixelSize = 293;
 		}
 		
-		System.out.println("IMage absolute path: " + image.getFile().getAbsolutePath());
+		System.out.println("Image absolute path: " + image.getFile().getAbsolutePath());
 		
 		Region[] possibleFaces = null; 
 			
@@ -213,11 +213,17 @@ public class MainController {
 			possibleFaces = detectionHotSpot.getActivePlugin().detectFaces(image.getFile().getAbsolutePath(), scanWindowPixelSize);
 		}catch (Exception e){
 			e.printStackTrace();
-			if(possibleFaces == null){
-				throw new UnableToProcesImageException("Unable to process the image. Please try again!!");
-			}
+			throw new UnableToProcesImageException("Unable to process the image. Please try again!!");
+			
 		}
 		
+		if(possibleFaces == null){
+			throw new UnableToProcesImageException("Unable to process the image. Please try again!!");
+		}else if(possibleFaces.length > 1){
+			throw new UnableToProcesImageException("More than one faces detected. Please try again!!");
+		}else if(possibleFaces.length == 0){
+			throw new UnableToProcesImageException("No faces detected. Please try again!!");
+		}
 		
 		System.out.println("Possible faces: " + possibleFaces.length);
 		

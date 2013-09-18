@@ -1,14 +1,12 @@
 package com.sjsu.faceit.helper;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-import com.sjsu.faceit.db.MySqlDbManager;
+import com.sjsu.faceit.db.MySQLManager;
 import com.sjsu.faceit.exception.EmailAlreadyRegisteredException;
 
 public class ImplHelper {
@@ -16,9 +14,9 @@ public class ImplHelper {
 	private final static String LOWER   = "abcdefghijklmnopqrstuvwxyz";
 	private final static String UPPER   = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	private final static String NUMBERS = "0123456789";
-	private final static String DETECTION_SUCCESS_FILE = ".." + File.separator + "temp"  + File.separator + "detectionSuccess.txt";
-	private final static String DETECTION_FAILURE_FILE = ".." + File.separator + "temp"  + File.separator + "detectionFailure.txt";
-	private final static String RECOGNITION_SCORE_FILE = ".." + File.separator + "temp"  + File.separator + "recognitionScore.txt";
+//	private final static String DETECTION_SUCCESS_FILE = ".." + File.separator + "temp"  + File.separator + "detectionSuccess.txt";
+//	private final static String DETECTION_FAILURE_FILE = ".." + File.separator + "temp"  + File.separator + "detectionFailure.txt";
+//	private final static String RECOGNITION_SCORE_FILE = ".." + File.separator + "temp"  + File.separator + "recognitionScore.txt";
 		
 	// password
 	private final static String PASSWORD_SYMBOLS  = "-_";
@@ -50,7 +48,7 @@ public class ImplHelper {
 	}
 	
 	public static void isEmailRegistered(String email) throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException, EmailAlreadyRegisteredException{
-		if(MySqlDbManager.getInstance().isEmailRegistered(email))
+		if(MySQLManager.getInstance().isEmailRegistered(email))
 			throw new EmailAlreadyRegisteredException();
 	}
 	
@@ -89,66 +87,66 @@ public class ImplHelper {
 	    return strDate;
 	}
 	
-	public static void storeDetectionSuccessData(String email, String currentTimeStamp) {
-		storeDetectionData(email, DETECTION_SUCCESS_FILE, currentTimeStamp);
-	}
+//	public static void storeDetectionSuccessData(String email, String currentTimeStamp) {
+//		storeDetectionData(email, DETECTION_SUCCESS_FILE, currentTimeStamp);
+//	}
+//	
+//	public static void storeDetectionFailureData(String email, String currentTimeStamp){
+//		storeDetectionData(email, DETECTION_FAILURE_FILE, currentTimeStamp);
+//	}
 	
-	public static void storeDetectionFailureData(String email, String currentTimeStamp){
-		storeDetectionData(email, DETECTION_FAILURE_FILE, currentTimeStamp);
-	}
-	
-	public static synchronized void storeRecognitionData(String email, String currentTimeStamp, int recognitionScore) {
-		try{
-			  // Create file 
-			  FileWriter fstream = new FileWriter(RECOGNITION_SCORE_FILE, true);
-			  BufferedWriter out = new BufferedWriter(fstream);
-			  int lengthCounter = email.length();
-			  
-			  //write the data
-			  out.write(email);
-			  while(lengthCounter < 40){
-				out.write(" ");
-				lengthCounter++;
-			  }
-			  out.write(currentTimeStamp);
-			  while(lengthCounter < 50){
-					out.write(" ");
-					lengthCounter++;
-			  }
-			  out.write(Integer.toString(recognitionScore));
-			  out.newLine();
-			  out.flush();
-			  //Close the output stream
-			  out.close();
-			  
-		}catch (Exception e){//Catch exception if any
-			  System.err.println("Error: " + e.getMessage());
-		}
-	}
+//	public static void storeRecognitionData(String email, String currentTimeStamp, int recognitionScore) {
+//		try{
+//			  // Create file 
+//			  FileWriter fstream = new FileWriter(RECOGNITION_SCORE_FILE, true);
+//			  BufferedWriter out = new BufferedWriter(fstream);
+//			  int lengthCounter = email.length();
+//			  
+//			  //write the data
+//			  out.write(email);
+//			  while(lengthCounter < 40){
+//				out.write(" ");
+//				lengthCounter++;
+//			  }
+//			  out.write(currentTimeStamp);
+//			  while(lengthCounter < 50){
+//					out.write(" ");
+//					lengthCounter++;
+//			  }
+//			  out.write(Integer.toString(recognitionScore));
+//			  out.newLine();
+//			  out.flush();
+//			  //Close the output stream
+//			  out.close();
+//			  
+//		}catch (Exception e){//Catch exception if any
+//			  System.err.println("Error: " + e.getMessage());
+//		}
+//	}
 
-	private static synchronized void storeDetectionData(String email, String file, String currentTimeStamp){
-		try{
-			  // Create file 
-			  FileWriter fstream = new FileWriter(file, true);
-			  BufferedWriter out = new BufferedWriter(fstream);
-			  int lengthCounter = email.length();
-			  
-			  //write the data
-			  out.write(email);
-			  while(lengthCounter < 50){
-				out.write(" ");
-				lengthCounter++;
-			  }
-			  out.write(currentTimeStamp);
-			  out.write("\n");
-			  out.flush();
-			  //Close the output stream
-			  out.close();
-			  
-		}catch (Exception e){//Catch exception if any
-			  System.err.println("Error: " + e.getMessage());
-		}
-	}
+//	private static synchronized void storeDetectionData(String email, String file, String currentTimeStamp){
+//		try{
+//			  // Create file 
+//			  FileWriter fstream = new FileWriter(file, true);
+//			  BufferedWriter out = new BufferedWriter(fstream);
+//			  int lengthCounter = email.length();
+//			  
+//			  //write the data
+//			  out.write(email);
+//			  while(lengthCounter < 50){
+//				out.write(" ");
+//				lengthCounter++;
+//			  }
+//			  out.write(currentTimeStamp);
+//			  out.write("\n");
+//			  out.flush();
+//			  //Close the output stream
+//			  out.close();
+//			  
+//		}catch (Exception e){//Catch exception if any
+//			  System.err.println("Error: " + e.getMessage());
+//		}
+//	}
 	
 	
 }
